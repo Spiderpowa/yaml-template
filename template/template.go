@@ -2,6 +2,8 @@ package template
 
 import (
 	"io"
+	"io/ioutil"
+	"os"
 	"text/template"
 
 	"gopkg.in/yaml.v2"
@@ -13,7 +15,7 @@ type Template struct {
 }
 
 // New parses input and creates a Template instance with given name.
-func New(name string, in string) (*Template, error) {
+func New(name, in string) (*Template, error) {
 	tmpl, err := template.New(name).Parse(in)
 	if err != nil {
 		return nil, err
@@ -21,6 +23,20 @@ func New(name string, in string) (*Template, error) {
 	return &Template{
 		tmpl: tmpl,
 	}, nil
+}
+
+// NewFromFile parses the file and creates a Template instance with given name.
+func NewFromFile(name string, file string) (*Template, error) {
+	fd, err := os.Open(file)
+	if err != nil {
+		return nil, err
+	}
+	defer fd.Close()
+	cfg, err := ioutil.ReadAll(fd)
+	if err != nil {
+		return nil, err
+	}
+	return New(name, string(cfg))
 }
 
 // ApplyYaml applies yaml input to the template and write its output to writer.
