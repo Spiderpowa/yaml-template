@@ -1,4 +1,4 @@
-package template
+package yamltmpl
 
 import (
 	"bytes"

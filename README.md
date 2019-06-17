@@ -1,15 +1,15 @@
 # YAML Templating Library for Golang
 
-[![CircleCI](https://circleci.com/gh/Spiderpowa/yaml-template.svg?style=shield)](https://circleci.com/gh/Spiderpowa/yaml-template)
+[![CircleCI](https://circleci.com/gh/Spiderpowa/yamltmpl.svg?style=shield)](https://circleci.com/gh/Spiderpowa/yamltmpl)
 
 ## Introduction
 
-`yaml-template` uses `text/template` as internal template engine. Check its [document](https://golang.org/pkg/text/template/) for details.
+`yamltmpl` uses `text/template` as internal template engine. Check its [document](https://golang.org/pkg/text/template/) for details.
 
 ## Installation
 
 ```shell
-go get github.com/Spiderpowa/yaml-template
+go get github.com/Spiderpowa/yamltmpl
 ```
 
 ## Example
@@ -21,11 +21,11 @@ import (
     "bytes"
     "fmt"
 
-    "github.com/Spiderpowa/yaml-template/template"
+    "github.com/Spiderpowa/yamltmpl"
 )
 
 func main() {
-    tmpl, err := template.New("test", "host: {{.host}}\nport: {{.port}}\nname: it's a test")
+    tmpl, err := yamltmpl.New("test", "host: {{.host}}\nport: {{.port}}\nname: it's a test")
     if err != nil {
         panic(err)
     }
@@ -47,5 +47,5 @@ name: it's a test
 
 ## Documentation
 
-[Godoc](https://godoc.org/github.com/Spiderpowa/yaml-template/template)
+[Godoc](https://godoc.org/github.com/Spiderpowa/yamltmpl/template)
 [Template](https://golang.org/pkg/text/template/)

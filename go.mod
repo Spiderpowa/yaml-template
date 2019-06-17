@@ -1,4 +1,4 @@
-module github.com/Spiderpowa/yaml-template
+module github.com/Spiderpowa/yamltmpl
 
 go 1.12
 
