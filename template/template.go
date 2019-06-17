@@ -31,3 +31,13 @@ func (t *Template) ApplyYaml(in []byte, wr io.Writer) error {
 	}
 	return t.tmpl.Execute(wr, arg)
 }
+
+// Apply applies yaml input from Reader to the template and write its output to writer.
+func (t *Template) Apply(rd io.Reader, wr io.Writer) error {
+	arg := make(map[string]interface{})
+	dec := yaml.NewDecoder(rd)
+	if err := dec.Decode(&arg); err != nil {
+		return err
+	}
+	return t.tmpl.Execute(wr, arg)
+}
