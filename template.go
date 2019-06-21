@@ -40,20 +40,22 @@ func NewFromFile(name string, file string) (*Template, error) {
 }
 
 // ApplyYaml applies yaml input to the template and write its output to writer.
-func (t *Template) ApplyYaml(in []byte, wr io.Writer) error {
+func (t *Template) ApplyYaml(in []byte, wr io.Writer, overrides ...map[string]interface{}) error {
 	arg := make(map[string]interface{})
 	if err := yaml.Unmarshal(in, &arg); err != nil {
 		return err
 	}
+	applyOverrides(arg, overrides...)
 	return t.tmpl.Execute(wr, arg)
 }
 
 // Apply applies yaml input from Reader to the template and write its output to writer.
-func (t *Template) Apply(rd io.Reader, wr io.Writer) error {
+func (t *Template) Apply(rd io.Reader, wr io.Writer, overrides ...map[string]interface{}) error {
 	arg := make(map[string]interface{})
 	dec := yaml.NewDecoder(rd)
 	if err := dec.Decode(&arg); err != nil {
 		return err
 	}
+	applyOverrides(arg, overrides...)
 	return t.tmpl.Execute(wr, arg)
 }
