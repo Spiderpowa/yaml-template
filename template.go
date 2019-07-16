@@ -16,7 +16,7 @@ type Template struct {
 
 // New parses input and creates a Template instance with given name.
 func New(name, in string) (*Template, error) {
-	tmpl, err := template.New(name).Parse(in)
+	tmpl, err := template.New(name).Funcs(defaultFunc).Parse(in)
 	if err != nil {
 		return nil, err
 	}
@@ -37,6 +37,12 @@ func NewFromFile(name string, file string) (*Template, error) {
 		return nil, err
 	}
 	return New(name, string(cfg))
+}
+
+// Funcs adds the function to the template's function map.
+func (t *Template) Funcs(funcs template.FuncMap) *Template {
+	t.tmpl.Funcs(funcs)
+	return t
 }
 
 // ApplyYaml applies yaml input to the template and write its output to writer.
