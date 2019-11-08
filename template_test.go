@@ -9,8 +9,33 @@ import (
 	"testing"
 )
 
+func TestParseFile(t *testing.T) {
+	tmpFile, err := ioutil.TempFile(".", "test_template.yaml")
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	defer os.Remove(tmpFile.Name())
+	tmpFile.WriteString("host: {{.host}}\nport: {{.port}}\nname: it's a test")
+	tmpFile.Close()
+
+	tmpl := New("test")
+	tmpl, err = tmpl.ParseFile(tmpFile.Name())
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	buf := new(bytes.Buffer)
+	if err := tmpl.ApplyYaml([]byte("port: 3000\nhost: http://localhost"), buf); err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	ref := "host: http://localhost\nport: 3000\nname: it's a test"
+	if buf.String() != ref {
+		t.Errorf("expected: %s, got: %s", ref, buf.String())
+	}
+}
+
 func TestApplyYaml(t *testing.T) {
-	tmpl, err := New("test", "host: {{.host}}\nport: {{.port}}\nname: it's a test")
+	tmpl := New("test")
+	tmpl, err := tmpl.Parse("host: {{.host}}\nport: {{.port}}\nname: it's a test")
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
@@ -25,7 +50,8 @@ func TestApplyYaml(t *testing.T) {
 }
 
 func TestApplyYamlNil(t *testing.T) {
-	tmpl, err := New("test", "host: http://localhost\nport: 3000\nname: it's a test")
+	tmpl := New("test")
+	tmpl, err := tmpl.Parse("host: http://localhost\nport: 3000\nname: it's a test")
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
@@ -40,7 +66,8 @@ func TestApplyYamlNil(t *testing.T) {
 }
 
 func TestApply(t *testing.T) {
-	tmpl, err := New("test", "host: {{.host}}\nport: {{.port}}\nname: it's a test")
+	tmpl := New("test")
+	tmpl, err := tmpl.Parse("host: {{.host}}\nport: {{.port}}\nname: it's a test")
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
@@ -68,7 +95,8 @@ func TestFunc(t *testing.T) {
 	if err := fd.Close(); err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
-	tmpl, err := New("test", "name: {{base64 (readfile .file)}}")
+	tmpl := New("test")
+	tmpl, err = tmpl.Parse("name: {{base64 (readfile .file)}}")
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}

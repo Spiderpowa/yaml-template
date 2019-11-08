@@ -25,7 +25,8 @@ import (
 )
 
 func main() {
-    tmpl, err := yamltmpl.New("test", "host: {{.host}}\nport: {{.port}}\nname: it's a test")
+    tmpl := yamltmpl.New("test")
+    tmpl, err := tmpl.Parse("host: {{.host}}\nport: {{.port}}\nname: it's a test")
     if err != nil {
         panic(err)
     }

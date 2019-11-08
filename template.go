@@ -14,19 +14,25 @@ type Template struct {
 	tmpl *template.Template
 }
 
-// New parses input and creates a Template instance with given name.
-func New(name, in string) (*Template, error) {
-	tmpl, err := template.New(name).Funcs(defaultFunc).Parse(in)
+// New creates a Template instance.
+func New(name string) *Template {
+	return &Template{
+		tmpl: template.New(name),
+	}
+}
+
+// Parse the template input.
+func (t *Template) Parse(in string) (*Template, error) {
+	tmpl, err := t.Funcs(defaultFunc).tmpl.Parse(in)
 	if err != nil {
 		return nil, err
 	}
-	return &Template{
-		tmpl: tmpl,
-	}, nil
+	t.tmpl = tmpl
+	return t, nil
 }
 
-// NewFromFile parses the file and creates a Template instance with given name.
-func NewFromFile(name string, file string) (*Template, error) {
+// ParseFile parses the file as the template input.
+func (t *Template) ParseFile(file string) (*Template, error) {
 	fd, err := os.Open(file)
 	if err != nil {
 		return nil, err
@@ -36,7 +42,7 @@ func NewFromFile(name string, file string) (*Template, error) {
 	if err != nil {
 		return nil, err
 	}
-	return New(name, string(cfg))
+	return t.Parse(string(cfg))
 }
 
 // Funcs adds the function to the template's function map.
