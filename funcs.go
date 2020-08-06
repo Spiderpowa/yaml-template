@@ -28,3 +28,10 @@ func readfile(file string) ([]byte, error) {
 	}
 	return content, nil
 }
+
+// Funcs adds the default function.
+func Funcs(funcs template.FuncMap) {
+	for k, v := range funcs {
+		defaultFunc[k] = v
+	}
+}
